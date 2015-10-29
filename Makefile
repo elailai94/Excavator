@@ -1,9 +1,8 @@
 ##==============================================================================
-## CS 349 Assignment 02, Excavator
+## Excavator
 ##
 ## @description: Makefile for Excavator.java
-## @author: Ah Hoe Lai
-## @userid: ahlai
+## @author: Elisha Lai
 ## @version: 1.0 25/10/2015
 ##==============================================================================
 
