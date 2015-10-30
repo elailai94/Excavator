@@ -11,6 +11,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
+import java.lang.Math;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -22,11 +23,10 @@ public class Excavator {
 
    public static void main(String[] args) {		
       SpriteCanvas canvas = new SpriteCanvas();
-	  canvas.addSprite(Excavator.makeSprite());
+	  canvas.addSprite(makeSprite());
 
 	  JFrame f = new JFrame("Excavator");
-	  JMenuBar menuBar = Excavator.makeMenuBar(canvas);
-	  //f.setJMenuBar(menuBar);
+	  f.setJMenuBar(makeMenuBar(canvas));
       f.getContentPane().add(canvas);
 	  f.getContentPane().setLayout(new GridLayout(1, 1));
 	  f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -35,28 +35,34 @@ public class Excavator {
    } // main
 
    private static Sprite makeSprite() {
-   	  int[][] bodyPoints =
-   	     {{0, 0}, {0, -30}, {40, -100}, {90, -100}, {90, -55}, {200, -55}, {200, 0}};
-      Sprite body = new BodySprite(bodyPoints);
-      int[][] doorPoints =
-         {{0, 0}, {0, -20}, {35, -80}, {70, -80}, {70, 0}};
-      Sprite door = new DoorSprite(doorPoints);
-      int[][] slewingPoints =
-         {{0, 0}, {0, -10}, {150, -10}, {150, 0}};
-      Sprite slewing = new SlewingSprite(slewingPoints);
+      Sprite body = new BodySprite();
       Sprite treads = new TreadsSprite(250, 50);
+      Sprite boom = new BoomSprite(250, 30, 15, 15);
+      Sprite arm = new ArmSprite(210, 30, 35, 15);
+      Sprite bucket = new BucketSprite(-10, -40);
       
-      body.transform(AffineTransform.getTranslateInstance(200, 200));
-      door.transform(AffineTransform.getTranslateInstance(10, -10));
-      slewing.transform(AffineTransform.getTranslateInstance(25, 11));
+      body.transform(AffineTransform.getTranslateInstance(400, 350));
       treads.transform(AffineTransform.getTranslateInstance(-50, 11));
+      boom.transform(AffineTransform.getTranslateInstance(30, -35));
+      boom.transform(AffineTransform.getRotateInstance(Math.toRadians(225)));
+      arm.transform(AffineTransform.getTranslateInstance(220, 50));
+      arm.transform(AffineTransform.getRotateInstance(Math.toRadians(270)));
+      bucket.transform(AffineTransform.getTranslateInstance(230, 10));
+      bucket.transform(AffineTransform.getRotateInstance(Math.toRadians(270)));
 
-      body.addChild(door);
-      body.addChild(slewing);
+      body.addChild(boom);
+      boom.addChild(arm);
+      arm.addChild(bucket);
       body.addChild(treads);
-
+      
       return body;
    } // makeSprite
+
+   private static void resetCanvas(final SpriteCanvas canvas) {
+      canvas.removeAllSprites();
+      canvas.addSprite(makeSprite());
+      canvas.repaint();
+   } // resetCanvas
 
    // Makes a menu with resetting and quitting and another menu
    // with recording and playback
@@ -75,7 +81,7 @@ public class Excavator {
       reset.addActionListener(new ActionListener() {
          public void actionPerformed(ActionEvent e) {
          	if (reset.getText().equals("Reset")) {
-
+               resetCanvas(canvas);
          	} else {
          	   assert false;
          	} // if
@@ -118,6 +124,7 @@ public class Excavator {
 			if (play.getText().equals("Start script")) {
 			   play.setText("Stop script");
 			   record.setEnabled(false);
+			   resetCanvas(canvas);
 			   canvas.startDemo();
 			} else if (play.getText().equals("Stop script")) {
 			   play.setText("Start script");
