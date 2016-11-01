@@ -14,5 +14,8 @@ run: all
 	@echo "Running..."
 	java Excavator
 
+.PHONY: clean
+
 clean:
-	rm *.class
+	@echo "Cleaning..."
+	find . -name "*.class" -delete
